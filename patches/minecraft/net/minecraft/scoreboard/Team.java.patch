@@ -1,0 +1,58 @@
+--- ../src-base/minecraft/net/minecraft/scoreboard/Team.java
++++ ../src-work/minecraft/net/minecraft/scoreboard/Team.java
+@@ -4,11 +4,13 @@
+ import java.util.Collection;
+ import java.util.Map;
+ import javax.annotation.Nullable;
++
++import net.minecraft.nbt.NBTTagCompound;
+ import net.minecraft.util.text.TextFormatting;
+ import net.minecraftforge.fml.relauncher.Side;
+ import net.minecraftforge.fml.relauncher.SideOnly;
+ 
+-public abstract class Team
++public abstract class Team implements net.minecraftforge.common.capabilities.ICapabilitySerializable<net.minecraft.nbt.NBTTagCompound>
+ {
+     public boolean func_142054_a(@Nullable Team p_142054_1_)
+     {
+@@ -115,4 +117,40 @@
+             }
+         }
+     }
++
++    /* ======================================== FORGE START =====================================*/
++    private final net.minecraftforge.common.capabilities.CapabilityDispatcher capabilities;
++
++    public Team()
++    {
++        capabilities = net.minecraftforge.event.ForgeEventFactory.gatherCapabilities(this);
++    }
++
++    @Override
++    public boolean hasCapability(net.minecraftforge.common.capabilities.Capability<?> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities != null && capabilities.hasCapability(capability, facing);
++    }
++
++    @Override
++    @Nullable
++    public <T> T getCapability(net.minecraftforge.common.capabilities.Capability<T> capability, @Nullable net.minecraft.util.EnumFacing facing)
++    {
++        return capabilities == null ? null : capabilities.getCapability(capability, facing);
++    }
++
++    @Override
++    public NBTTagCompound serializeNBT()
++    {
++        NBTTagCompound nbtTagCompound = new NBTTagCompound();
++        if (this.capabilities != null) nbtTagCompound.func_74782_a("ForgeCaps", this.capabilities.serializeNBT());
++        return nbtTagCompound;
++    }
++
++    @Override
++    public void deserializeNBT(NBTTagCompound compound)
++    {
++        if (this.capabilities != null && compound.func_74764_b("ForgeCaps")) this.capabilities.deserializeNBT(compound.func_74775_l("ForgeCaps"));
++    }
++    /* ========================================= FORGE END ======================================*/
+ }

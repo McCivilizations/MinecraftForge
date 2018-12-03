@@ -43,6 +43,7 @@ import net.minecraft.entity.projectile.EntityThrowable;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.tileentity.MobSpawnerBaseLogic;
 import net.minecraft.tileentity.TileEntity;
@@ -660,6 +661,12 @@ public class ForgeEventFactory
     public static CapabilityDispatcher gatherCapabilities(Chunk chunk)
     {
         return gatherCapabilities(new AttachCapabilitiesEvent<Chunk>(Chunk.class, chunk), null);
+    }
+
+    @Nullable
+    public static CapabilityDispatcher gatherCapabilities(Team team)
+    {
+        return gatherCapabilities(new AttachCapabilitiesEvent<>(Team.class, team), null);
     }
 
     @Nullable
